@@ -1,0 +1,80 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<AssemblyTitle>WebPCodec</AssemblyTitle>
+		<Version>0.1.0</Version>
+		<Description>WebP codec support for Texture2D</Description>
+		<Authors>Clazex</Authors>
+
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<Copyright>Copyright © 2023 Clazex</Copyright>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageProjectUrl>https://github.com/Clazex/WebPCodec#readme</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/Clazex/WebPCodec</RepositoryUrl>
+
+		<LangVersion>10.0</LangVersion>
+		<TargetFramework>net472</TargetFramework>
+		<DebugType>portable</DebugType>
+		<RootNamespace>WebPCodec</RootNamespace>
+
+		<Optimize>True</Optimize>
+		<Deterministic>True</Deterministic>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)'))=./</PathMap>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<ProjectRoot>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)/../'))</ProjectRoot>
+		<HKRefs Condition="$(HKRefs) == ''">../HKManaged/</HKRefs>
+		<HKModdingApi Condition="$(HKModdingApi) == ''">$(HKRefs)</HKModdingApi>
+		<HKModOutputPath Condition="$(HKModOutputPath) == ''">$(HKRefs)/Mods</HKModOutputPath>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="../.editorconfig" />
+		<None Include="../.gitignore" />
+		<None Include="../LICENSE" />
+		<None Include="../package.json" />
+		<None Include="../README.md" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="mscorlib">
+			<HintPath>$(HKRefs)/mscorlib.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="System">
+			<HintPath>$(HKRefs)/System.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="System.Core">
+			<HintPath>$(HKRefs)/System.Core.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="UnityEngine">
+			<HintPath>$(HKRefs)/UnityEngine.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="UnityEngine.CoreModule">
+			<HintPath>$(HKRefs)/UnityEngine.CoreModule.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="UnityEngine.ImageConversionModule">
+			<HintPath>$(HKRefs)/UnityEngine.ImageConversionModule.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+	</ItemGroup>
+
+	<Target Name="CopyConfig" BeforeTargets="BeforeBuild">
+		<Copy SourceFiles="$(ProjectDir)/$(TargetName).dll.config" DestinationFolder="$(TargetDir)" />
+	</Target>
+
+	<Target Name="CopyMod" AfterTargets="PostBuildEvent">
+		<ItemGroup>
+			<OutputFiles Include="$(TargetDir)/*.*" />
+		</ItemGroup>
+
+		<Copy SourceFiles="@(OutputFiles)" DestinationFolder="$(HKModOutputPath)/$(TargetName)" />
+	</Target>
+</Project>
